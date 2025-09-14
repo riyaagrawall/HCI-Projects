@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Path@Penn – Phone Prototype (No Scroll + Cart)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --penn-blue:#011F5B; --penn-red:#990000; --muted:#6B7280; --bg:#F3F4F6; --card:#FFFFFF;
+    --ss:#2563EB; --core:#9333EA; --warn:#DC2626;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;background:#e5e7eb;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+  /* Phone frame — fixed size, no scroll */
+  .phone{
+    width:390px;height:844px;margin:12px auto;background:var(--bg);
+    border:12px solid #000;border-radius:38px;box-shadow:0 12px 40px #0003;
+    overflow:hidden;display:flex;flex-direction:column;
+  }
+  .topbar{height:56px;background:var(--penn-blue);color:#fff;padding:0 16px;display:flex;align-items:center;justify-content:space-between}
+  .brand{display:flex;gap:10px;align-items:center;font-weight:800}
+  .shield{width:22px;height:22px;border-radius:4px;background:linear-gradient(135deg,var(--penn-blue),#1e3a8a);box-shadow:inset 0 0 0 2px #fff9}
+  .hi{font-size:12px;opacity:.9}
+  .tabs{height:42px;display:flex;gap:8px;align-items:center;background:#fff;padding:0 12px}
+  .pill{padding:6px 10px;border-radius:999px;border:1px solid #E5E7EB;background:#fff;font-weight:600;font-size:12px}
+  .pill.active{background:#EFF6FF;border-color:#BFDBFE;color:#1E3A8A}
+  .ribbon{height:38px;display:flex;align-items:center;background:var(--penn-red);color:#fff;padding:0 16px;font-weight:800}
+  /* Main area fits remainder exactly: NO SCROLL */
+  .main{
+    flex:1;
+    display:grid;
+    grid-template-rows:
+      auto   /* search panel */
+      auto   /* title: Requirements */
+      1fr    /* requirements card */
+      auto   /* title: From Primary Cart */
+      auto   /* compact cart */
+      auto;  /* footer */
+    gap:8px; padding:8px 12px;
+  }
+  /* Search (compact) */
+  .panel{background:var(--card);padding:10px;border-radius:12px;display:grid;gap:8px}
+  label{font-size:11px;color:var(--muted);margin-bottom:4px;display:block}
+  select,input[type="text"]{width:100%;height:34px;border:1px solid #E5E7EB;border-radius:8px;padding:0 10px;font-size:14px}
+  .btn{height:34px;border:0;border-radius:10px;background:var(--penn-blue);color:#fff;font-weight:800;letter-spacing:.3px}
+  .section-title{font-size:11px;color:#374151;font-weight:800;text-transform:uppercase;letter-spacing:.8px;padding:0 4px}
+  /* Requirements Dashboard (MAJOR) */
+  .req-card{background:var(--card);border-radius:12px;padding:10px;display:grid;gap:10px;overflow:hidden}
+  .req-row{display:grid;gap:6px}
+  .req-head{display:flex;align-items:center;gap:8px;font-weight:800;font-size:14px}
+  .dot{width:10px;height:10px;border-radius:50%}
+  .bar{height:8px;background:#E5E7EB;border-radius:999px;overflow:hidden}
+  .fill{height:100%;border-radius:999px}
+  .perc{font-size:11px;color:var(--muted);font-weight:700}
+  /* Compact Primary Cart (MINORs: requirement chips + conflict flag) */
+  .cart{background:#fff;border-radius:12px;overflow:hidden;border:1px solid #E5E7EB}
+  .cart-head{background:var(--penn-blue);color:#fff;font-weight:800;padding:8px 12px;font-size:13px}
+  .cart-body{padding:8px;display:grid;gap:6px}
+  .course{border:1px solid #E5E7EB;border-radius:10px;padding:8px;display:grid;gap:6px}
+  .course-title{font-weight:800;font-size:13px;line-height:1.2}
+  .badges{display:flex;gap:6px;flex-wrap:wrap}
+  .badge{font-size:11px;font-weight:800;padding:4px 8px;border-radius:999px;color:#fff}
+  .b-ssh{background:var(--ss)} .b-core{background:var(--core)}
+  .b-conf{background:var(--warn)}
+  .meta{display:flex;gap:10px;align-items:center;font-size:11px}
+  .toggle{width:32px;height:18px;border-radius:999px;background:#e5e7eb;position:relative;display:inline-block}
+  .toggle::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 2px #0001}
+  .toggle.on{background:#D1FAE5}
+  .toggle.on::after{left:16px}
+  .warn{color:var(--warn);font-weight:700;display:flex;align-items:center;gap:6px}
+  .warn svg{width:12px;height:12px}
+  .footer{height:22px;display:flex;align-items:center;justify-content:center;color:#6b7280;font-size:10px}
+</style>
+</head>
+<body>
+  <div class="phone">
+    <div class="topbar">
+      <div class="brand"><div class="shield" aria-hidden="true"></div> Penn</div>
+      <div class="hi">Welcome, Riya</div>
+    </div>
+    <div class="tabs" role="tablist">
+      <button class="pill active" aria-selected="true">Search</button>
+      <button class="pill">Requirements</button>
+      <button class="pill">Calendar</button>
+    </div>
+    <div class="ribbon">Search Classes</div>
+
+    <div class="main">
+      <!-- Compact search -->
+      <div class="panel" aria-label="Search form">
+        <div>
+          <label for="term">Term</label>
+          <select id="term"><option>Fall 2025</option><option>Spring 2026</option></select>
+        </div>
+        <div>
+          <label for="q">Title, Subject, Instructor, Keyword</label>
+          <input id="q" type="text" placeholder="e.g., CIS 1210, Databases, Lee" />
+        </div>
+        <button class="btn">SEARCH</button>
+      </div>
+
+      <div class="section-title">Requirements Dashboard</div>
+
+      <!-- MAJOR: Degree requirements at-a-glance (kept concise to make room for cart) -->
+      <div class="req-card">
+        <div class="req-row">
+          <div class="req-head"><span class="dot" style="background:var(--ss)"></span> SS/H Requirement</div>
+          <div class="bar"><div class="fill" style="width:50%;background:var(--ss)"></div></div>
+          <div class="perc">3 / 6 completed</div>
+        </div>
+        <div class="req-row">
+          <div class="req-head"><span class="dot" style="background:var(--core)"></span> CIS Core</div>
+          <div class="bar"><div class="fill" style="width:67%;background:var(--core)"></div></div>
+          <div class="perc">4 / 6 completed</div>
+        </div>
+      </div>
+
+      <div class="section-title">From Primary Cart</div>
+
+      <!-- NEW: Compact Primary Cart section to fill the previous empty space -->
+      <div class="cart" aria-label="Primary Cart">
+        <div class="cart-head">PRIMARY CART</div>
+        <div class="cart-body">
+          <div class="course">
+            <div class="course-title">SOCI 1350 — Culture &amp; Society</div>
+            <div class="badges">
+              <span class="badge b-ssh">SS/H • 3/6</span>
+              <span class="badge b-conf">Time conflict</span>
+            </div>
+            <div class="meta">
+              <span class="toggle on" aria-hidden="true"></span> <span>Show on calendar</span>
+              <span class="warn" title="Conflicts with CIS 2400 Tu/Th 12–1:30">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 1 21h22L12 2zm1 14h-2v2h2v-2zm0-8h-2v6h2V8z"/></svg>
+                Does not fit current schedule
+              </span>
+            </div>
+          </div>
+
+          <div class="course">
+            <div class="course-title">CIS 3500 — Software Design/Engineering</div>
+            <div class="badges">
+              <span class="badge b-core">CIS Core • 5/6</span>
+            </div>
+            <div class="meta"><span class="toggle on" aria-hidden="true"></span> <span>Show on calendar</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
